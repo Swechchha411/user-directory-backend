@@ -1,23 +1,30 @@
+
 using System.ComponentModel.DataAnnotations;
 
 namespace UserDirectory.Api.DTOs;
 
 public class CreateUserDto
 {
-    [Required, StringLength(100, MinimumLength = 2)]
+    [Required(ErrorMessage = "Name is required.")]
+    [StringLength(100, MinimumLength = 2,
+        ErrorMessage = "Name must be between 2 and 100 characters.")]
     public string Name { get; set; } = string.Empty;
 
-    [Range(0, 120)]
+    [Range(1, 120,
+        ErrorMessage = "Age must be between 1 and 120.")]
     public int Age { get; set; }
 
-    [Required, StringLength(100)]
+    [Required(ErrorMessage = "City is required.")]
+    [StringLength(100)]
     public string City { get; set; } = string.Empty;
 
-    [Required, StringLength(100)]
+    [Required(ErrorMessage = "State is required.")]
+    [StringLength(100)]
     public string State { get; set; } = string.Empty;
 
-    [Required, RegularExpression(@"^[0-9A-Za-z -]{4,10}$",
-        ErrorMessage = "Pincode must be 4-10 letters, numbers, spaces, or hyphens.")]
+    [Required(ErrorMessage = "Pincode is required.")]
+    [RegularExpression(@"^\d{6}$",
+        ErrorMessage = "Pincode must contain exactly 6 digits.")]
     public string Pincode { get; set; } = string.Empty;
 }
 

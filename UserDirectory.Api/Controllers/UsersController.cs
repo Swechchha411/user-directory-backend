@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UserDirectory.Api.Data;
@@ -26,13 +27,17 @@ public class UsersController(AppDbContext context) : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<User>> GetUser(int id)
     {
+        if (id <= 0)
+            return BadRequest(new { message = "User ID must be greater than zero." });
+
         var user = await context.Users
             .AsNoTracking()
             .FirstOrDefaultAsync(user => user.Id == id);
 
-        return user is null
-            ? NotFound(new { message = $"User with ID {id} was not found." })
-            : Ok(user);
+        if (user is null)
+            return NotFound(new { message = $"User with ID {id} was not found." });
+
+        return Ok(user);
     }
 
     // POST: api/users
@@ -60,6 +65,9 @@ public class UsersController(AppDbContext context) : ControllerBase
     public async Task<ActionResult<User>> UpdateUser(
         int id, [FromBody] UpdateUserDto request)
     {
+        if (id <= 0)
+            return BadRequest(new { message = "User ID must be greater than zero." });
+
         var user = await context.Users.FindAsync(id);
 
         if (user is null)
@@ -72,6 +80,7 @@ public class UsersController(AppDbContext context) : ControllerBase
         user.Pincode = request.Pincode.Trim();
 
         await context.SaveChangesAsync();
+
         return Ok(user);
     }
 
@@ -79,6 +88,9 @@ public class UsersController(AppDbContext context) : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
+        if (id <= 0)
+            return BadRequest(new { message = "User ID must be greater than zero." });
+
         var user = await context.Users.FindAsync(id);
 
         if (user is null)
